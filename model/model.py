@@ -26,6 +26,7 @@ class Model:
     def load_tour(self):
         """ Carica tutti i tour in un dizionario [id, Tour]"""
         self.tour_map = TourDAO.get_tour()
+        self._pacchetto_ottimo = []
 
     def load_attrazioni(self):
         """ Carica tutte le attrazioni in un dizionario [id, Attrazione]"""
