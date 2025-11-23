@@ -1,3 +1,5 @@
+from flet.core import row
+
 from database.regione_DAO import RegioneDAO
 from database.tour_DAO import TourDAO
 from database.attrazione_DAO import AttrazioneDAO
@@ -38,6 +40,17 @@ class Model:
             --> Ogni Tour ha un set di Attrazione.
             --> Ogni Attrazione ha un set di Tour.
         """
+        relazioni=TourDAO.get_tour_attrazioni()
+
+        for relazione in relazioni:
+            id_tour=relazione["id_tour"]
+            id_attrazione=relazione["id_attrazione"]
+
+            tour=self.tour_map.get(id_tour)
+            attrazione=self.attrazioni_map.get(id_attrazione)
+
+            tour.attrazioni.add(attrazione)
+            attrazione.tour.add(tour)
 
         # TODO
 
