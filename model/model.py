@@ -11,7 +11,7 @@ class Model:
         self._valore_ottimo: int = -1
         self._costo = 0
 
-        # TODO: Aggiungere eventuali altri attributi
+        # TODO:  Aggiungere eventuali altri attributi
 
         # Caricamento
         self.load_tour()
