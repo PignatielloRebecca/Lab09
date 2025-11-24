@@ -110,7 +110,7 @@ class Model:
 
     def tour_validi(self, tour, durata_corrente, costo_corrente, attrazioni_usate):
         if self._max_giorni is not None and durata_corrente + tour.durata_giorni > self._max_giorni:
-            return False # costo accumuato fino ad ora e costo dei tour che si aggiungono
+            return False # costo accumulato fino ad ora e costo dei tour che si aggiungono
         if self._max_budget is not None and costo_corrente + tour.costo > self._max_budget:
            return False
         if self._attrazioni_duplicate(tour, attrazioni_usate):
