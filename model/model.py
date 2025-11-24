@@ -1,3 +1,5 @@
+import copy
+
 from flet.core import row
 
 from database.regione_DAO import RegioneDAO
@@ -12,6 +14,9 @@ class Model:
         self._pacchetto_ottimo = []
         self._valore_ottimo: int = -1
         self._costo = 0
+        self._max_giorni = None
+        self._max_budget =None
+        self._tour_regione=[]
 
         # TODO:  Aggiungere eventuali altri attributi
 
@@ -43,8 +48,8 @@ class Model:
         relazioni=TourDAO.get_tour_attrazioni()
 
         for relazione in relazioni:
-            id_tour=relazione["id_tour"]
-            id_attrazione=relazione["id_attrazione"]
+            id_tour=relazione["id_tour"] # qua prendiamo l'id del tuor
+            id_attrazione=relazione["id_attrazione"] # qua prendiamo l'id dell'attrazione
 
             tour=self.tour_map.get(id_tour)
             attrazione=self.attrazioni_map.get(id_attrazione)
@@ -65,15 +70,73 @@ class Model:
         :return: self._costo (il costo del pacchetto)
         :return: self._valore_ottimo (il valore culturale del pacchetto)
         """
+        # seleziono i vincoli
+
         self._pacchetto_ottimo = []
         self._costo = 0
         self._valore_ottimo = -1
 
+        self._max_giorni=max_giorni
+        self._max_budget=max_budget
+
+        # seleziono solo i tour di una regione
+        self._tour_regione=[tour for tour in self.tour_map.values() if str(tour.id_regione) == str(id_regione)]
+
+        # calcolo il valore culturale del tour
+        for tour in self._tour_regione:
+            tour.valore_culturale = sum(attrazione.valore_culturale for attrazione in tour.attrazioni) # per ogni attrazione ho il valore
+
+        self._ricorsione(0, [], 0,0, 0,set())
+
         # TODO
+
 
         return self._pacchetto_ottimo, self._costo, self._valore_ottimo
 
+    def _attrazioni_duplicate(self,tour, attrazioni_usate):
+        for attrazione in tour.attrazioni:
+            if attrazione in attrazioni_usate:
+                return True
+        return False
+
+
+    def _aggiorna_attrazioni(self, tour, attrazioni_usate):
+        nuove=set(attrazioni_usate)
+        for attrazione in tour.attrazioni:
+            nuove.add(attrazione)
+        return nuove
+
+    def tour_validi(self, tour, durata_corrente, costo_corrente, attrazioni_usate):
+        if self._max_giorni is not None and durata_corrente + tour.durata_giorni > self._max_giorni:
+            return False
+        if self._max_budget is not None and costo_corrente + tour.costo > self._max_budget:
+           return False
+        if self._attrazioni_duplicate(tour, attrazioni_usate):
+            return False
+        return True
+
     def _ricorsione(self, start_index: int, pacchetto_parziale: list, durata_corrente: int, costo_corrente: float, valore_corrente: int, attrazioni_usate: set):
         """ Algoritmo di ricorsione che deve trovare il pacchetto che massimizza il valore culturale"""
+        # condizione terminale
+
+        if start_index>=len(self._tour_regione): # finisco quando ho analizzato tutti i tour
+            if valore_corrente>self._valore_ottimo:
+                self._valore_ottimo = valore_corrente
+                self._costo = costo_corrente
+                self._pacchetto_ottimo= (copy.deepcopy(pacchetto_parziale))
+            return
+        else:
+            for i in range(start_index, len(self._tour_regione)):
+                tour=self._tour_regione[i]
+                if self.tour_validi(tour, durata_corrente, costo_corrente, attrazioni_usate):
+                    pacchetto_parziale.append(tour)
+                    nuove_attrazioni=self._aggiorna_attrazioni(tour, attrazioni_usate)
+
+                    self._ricorsione(i + 1,pacchetto_parziale,durata_corrente + tour.durata_giorni,costo_corrente + tour.costo,valore_corrente + tour.valore_culturale,nuove_attrazioni)
+
+                    pacchetto_parziale.pop()
+
+
+
 
         # TODO: è possibile cambiare i parametri formali della funzione se ritenuto opportuno
