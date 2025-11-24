@@ -102,10 +102,10 @@ class Model:
 
 
     #def _aggiorna_attrazioni(self, tour, attrazioni_usate):
-        nuove=set(attrazioni_usate)
-        for attrazione in tour.attrazioni:
-            nuove.add(attrazione)
-        return nuove
+        #nuove=set(attrazioni_usate)
+        #for attrazione in tour.attrazioni:
+            #nuove.add(attrazione)
+        #return nuove
 
 
     def tour_validi(self, tour, durata_corrente, costo_corrente, attrazioni_usate):
