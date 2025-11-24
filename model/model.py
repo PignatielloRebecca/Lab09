@@ -94,9 +94,9 @@ class Model:
 
         return self._pacchetto_ottimo, self._costo, self._valore_ottimo
 
-    def _attrazioni_duplicate(self,tour, attrazioni_usate):
+    def _attrazioni_duplicate(self,tour, attrazioni_usate:set):
         for attrazione in tour.attrazioni:
-            if attrazione in attrazioni_usate:
+            if attrazione.id in attrazioni_usate:
                 return True
         return False
 
@@ -119,8 +119,7 @@ class Model:
     def _ricorsione(self, start_index: int, pacchetto_parziale: list, durata_corrente: int, costo_corrente: float, valore_corrente: int, attrazioni_usate: set):
         """ Algoritmo di ricorsione che deve trovare il pacchetto che massimizza il valore culturale"""
         # condizione terminale
-
-        if start_index>=len(self._tour_regione): # finisco quando ho analizzato tutti i tour
+        if start_index==len(self._tour_regione): # finisco quando ho analizzato tutti i tour
             if valore_corrente>self._valore_ottimo:
                 self._valore_ottimo = valore_corrente
                 self._costo = costo_corrente
@@ -128,7 +127,7 @@ class Model:
             return
         else:
             for i in range(start_index, len(self._tour_regione)):
-                tour=self._tour_regione[i]
+                tour=self._tour_regione[i] # prendo il primo tour
                 if self.tour_validi(tour, durata_corrente, costo_corrente, attrazioni_usate):
                     pacchetto_parziale.append(tour)
                     nuove_attrazioni = set(attrazioni_usate)
