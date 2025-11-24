@@ -137,10 +137,9 @@ class Model:
         else:
             for i in range(start_index, len(self._tour_regione)):
                 tour=self._tour_regione[i] # prendo il primo tour
-                attrazioni_usate = []
+                attrazioni_usate = set()
                 for tour_pacchetto in pacchetto_parziale:
-                    attrazioni_usate= attrazioni_usate + list(tour_pacchetto.attrazioni)
-
+                    attrazioni_usate.update(tour_pacchetto.attrazioni)
 
 
                 if self.tour_validi(tour, durata_corrente, costo_corrente, attrazioni_usate):
