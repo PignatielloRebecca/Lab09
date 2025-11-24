@@ -107,6 +107,7 @@ class Model:
             nuove.add(attrazione)
         return nuove
 
+
     def tour_validi(self, tour, durata_corrente, costo_corrente, attrazioni_usate):
         if self._max_giorni is not None and durata_corrente + tour.durata_giorni > self._max_giorni:
             return False # costo accumuato fino ad ora e costo dei tour che si aggiungono
@@ -120,12 +121,13 @@ class Model:
         """ Algoritmo di ricorsione che deve trovare il pacchetto che massimizza il valore culturale"""
         # condizione terminale
 
+
         if start_index==len(self._tour_regione): # finisco quando ho analizzato tutti i tour
             #if valore_corrente>self._valore_ottimo:# indica se il valore corrente ha un valore massimo di quello trovto fino ad pra
             valore_culturale=0
             for tour in pacchetto_parziale:
                 for attrazioni in tour.attrazioni:
-                    valore_culturale+=attrazioni.valore_culturale
+                    valore_culturale=attrazioni.valore_culturale
 
             if valore_culturale> self._valore_ottimo:
                 self._valore_ottimo = valore_culturale
@@ -135,17 +137,20 @@ class Model:
         else:
             for i in range(start_index, len(self._tour_regione)):
                 tour=self._tour_regione[i] # prendo il primo tour
-                attrazioni_usate=set()
-                for tour in pacchetto_parziale:
-                    for attrazioni in tour.attrazioni:
-                        attrazioni_usate.add(attrazioni)
+                attrazioni_usate = set()
+                for tour_pacchetto in pacchetto_parziale:
+                    attrazioni_usate.update(tour_pacchetto.attrazioni)
+
+
                 if self.tour_validi(tour, durata_corrente, costo_corrente, attrazioni_usate):
                     pacchetto_parziale.append(tour)
 
 
-                    self._ricorsione(i + 1,pacchetto_parziale,durata_corrente + tour.durata_giorni,costo_corrente + tour.costo,valore_corrente)
 
+                    self._ricorsione(i + 1,pacchetto_parziale,durata_corrente + tour.durata_giorni,costo_corrente + tour.costo, valore_corrente)
                     pacchetto_parziale.pop()
+        
+
 
 
 
