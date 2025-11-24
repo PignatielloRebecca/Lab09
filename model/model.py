@@ -48,14 +48,15 @@ class Model:
         relazioni=TourDAO.get_tour_attrazioni()
 
         for relazione in relazioni:
-            id_tour=relazione["id_tour"] # qua prendiamo l'id del tuor
-            id_attrazione=relazione["id_attrazione"] # qua prendiamo l'id dell'attrazione
+            id_tour=str(relazione["id_tour"]) # qua prendiamo l'id del tour
+            id_attrazione=(relazione["id_attrazione"]) # qua prendiamo l'id dell'attrazione
 
             tour=self.tour_map.get(id_tour)
             attrazione=self.attrazioni_map.get(id_attrazione)
+            if tour and attrazione:
 
-            tour.attrazioni.add(attrazione)
-            attrazione.tour.add(tour)
+                tour.attrazioni.add(attrazione)
+                attrazione.tour.add(tour)
 
         # TODO
 
@@ -100,7 +101,7 @@ class Model:
         return False
 
 
-    def _aggiorna_attrazioni(self, tour, attrazioni_usate):
+    #def _aggiorna_attrazioni(self, tour, attrazioni_usate):
         nuove=set(attrazioni_usate)
         for attrazione in tour.attrazioni:
             nuove.add(attrazione)
@@ -130,7 +131,8 @@ class Model:
                 tour=self._tour_regione[i]
                 if self.tour_validi(tour, durata_corrente, costo_corrente, attrazioni_usate):
                     pacchetto_parziale.append(tour)
-                    nuove_attrazioni=self._aggiorna_attrazioni(tour, attrazioni_usate)
+                    nuove_attrazioni = set(attrazioni_usate)
+                    nuove_attrazioni.update(tour.attrazioni)
 
                     self._ricorsione(i + 1,pacchetto_parziale,durata_corrente + tour.durata_giorni,costo_corrente + tour.costo,valore_corrente + tour.valore_culturale,nuove_attrazioni)
 
