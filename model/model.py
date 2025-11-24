@@ -124,13 +124,13 @@ class Model:
 
         if start_index==len(self._tour_regione): # finisco quando ho analizzato tutti i tour
             #if valore_corrente>self._valore_ottimo:# indica se il valore corrente ha un valore massimo di quello trovto fino ad pra
-            valore_culturale=0
-            for tour in pacchetto_parziale:
-                for attrazioni in tour.attrazioni:
-                    valore_culturale=attrazioni.valore_culturale
+            #valore_culturale=0
+            #for tour in pacchetto_parziale:
+                #for attrazioni in tour.attrazioni:
+                    #valore_culturale+=attrazioni.valore_culturale
 
-            if valore_culturale> self._valore_ottimo:
-                self._valore_ottimo = valore_culturale
+            if valore_corrente> self._valore_ottimo:
+                self._valore_ottimo = valore_corrente
                 self._costo = costo_corrente
                 self._pacchetto_ottimo=pacchetto_parziale.copy()
             return
@@ -143,11 +143,14 @@ class Model:
 
 
                 if self.tour_validi(tour, durata_corrente, costo_corrente, attrazioni_usate):
+                    incremento=0
+                    for attrazione in tour.attrazioni:
+                        incremento += attrazione.valore_culturale
+
+                    nuovo_valore = valore_corrente + incremento
                     pacchetto_parziale.append(tour)
 
-
-
-                    self._ricorsione(i + 1,pacchetto_parziale,durata_corrente + tour.durata_giorni,costo_corrente + tour.costo, valore_corrente)
+                    self._ricorsione(i + 1,pacchetto_parziale,durata_corrente + tour.durata_giorni,costo_corrente + tour.costo, nuovo_valore)
                     pacchetto_parziale.pop()
         
 
