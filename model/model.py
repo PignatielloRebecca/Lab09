@@ -100,13 +100,11 @@ class Model:
                 return True
         return False
 
-
     #def _aggiorna_attrazioni(self, tour, attrazioni_usate):
         #nuove=set(attrazioni_usate)
         #for attrazione in tour.attrazioni:
             #nuove.add(attrazione)
         #return nuove
-
 
     def tour_validi(self, tour, durata_corrente, costo_corrente, attrazioni_usate):
         if self._max_giorni is not None and durata_corrente + tour.durata_giorni > self._max_giorni:
@@ -123,24 +121,18 @@ class Model:
 
 
         if start_index==len(self._tour_regione): # finisco quando ho analizzato tutti i tour
-            #if valore_corrente>self._valore_ottimo:# i
-            #valore_culturale=0
-            #for tour in pacchetto_parziale:
-                #for attrazioni in tour.attrazioni:
-                    #valore_culturale+=attrazioni.valore_culturale
-
             if valore_corrente> self._valore_ottimo: # quando il valore corrente è maggiore del valore culturale massimo
                 self._valore_ottimo = valore_corrente
                 self._costo = costo_corrente
                 self._pacchetto_ottimo=pacchetto_parziale.copy()
             return
+        attrazioni_usate = []
+        for tour_pacchetto in pacchetto_parziale:
+            for attrazione in tour_pacchetto.attrazioni:
+                attrazioni_usate.append(attrazione)
         else:
             for i in range(start_index, len(self._tour_regione)):
                 tour=self._tour_regione[i] # prendo il primo tour
-                attrazioni_usate = set()
-                for tour_pacchetto in pacchetto_parziale:
-                    attrazioni_usate.update(tour_pacchetto.attrazioni)
-
 
                 if self.tour_validi(tour, durata_corrente, costo_corrente, attrazioni_usate):
                     incremento=0
@@ -150,14 +142,9 @@ class Model:
                     nuovo_valore = valore_corrente + incremento
                     pacchetto_parziale.append(tour)
 
-
-
                     self._ricorsione(i + 1,pacchetto_parziale,durata_corrente + tour.durata_giorni,costo_corrente + tour.costo, nuovo_valore)
                     pacchetto_parziale.pop()
         
-
-
-
 
 
 
